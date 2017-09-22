@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <student PK="s3" NAME="黄启庆" AGE="10" DEPTID="003"/>
+  <student PK="s4" NAME="你好" AGE="11" DEPTID="004"/>
+  <dept PK="003" NAME="烟草"/>
+  <dept PK="004" NAME="质检"/>
+</dataset>

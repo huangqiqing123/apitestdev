@@ -1,0 +1,13 @@
+---------注意事项---------------------
+*使用DBunit导入xml数据时，须确保第一行不存在null的字段，否则会导致下面的行，该字段列都是null。
+=============================
+DBUnit依赖于Simple Logging Facade for Java (SLF4J)项目官网:http://www.slf4j.org/，所以项目中需要引入下面2个包：
+1.添加slf4j-api-1.5.3.jar
+2.添加slf4j-jcl-1.5.3.jar
+另外，SLF4J依赖于Apache的 Commons-Logging，所以还需要引入包：
+commons-logging.jar
+
+=================================
+dbunit不支持与较新的POI版本，最佳搭档：DBUnit2.4.8 + POI3.2
+
+

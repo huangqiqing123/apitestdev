@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="test_src"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/ant.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/cobertura.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/db2jcc_license_cu.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/db2jcc.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/dbunit-2.4.8.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/easymock-3.0.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/jakarta-oro-2.0.8.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/jmockit.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/junit-4.9b2.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/mail.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/objenesis-1.2.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/ojdbc5.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/poi-3.2-FINAL-20081019.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/slf4j-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/slf4j-jcl-1.6.1.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/substance.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/bsp-core.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/next.jar" sourcepath="/APITest-product/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.5.0_08"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/activation-1.1.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/log4j-1.2.9.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/asm-3.0.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/test_lib/asm-tree-3.0.jar"/>
+	<classpathentry kind="output" path="WEB-INF/classes"/>
+</classpath>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="APITest" default="generate_coverage-report" basedir="." > 
+    
+	<!--准备环境变量-->
+	<target name="setProperties"> 		
+    	<property name="lib.dir"   value="WEB-INF/lib" /> <!-- 应用程序jar包 -->
+		<property name="test_lib.dir"   value="WEB-INF/test_lib" /> <!-- 测试用jar包 -->
+		
+		<path id="all_libs">
+		    <fileset dir="${lib.dir}" includes="**/*.jar"/>
+			<fileset dir="${test_lib.dir}" includes="**/*.jar"/>
+		</path>	
+		<property name="src.dir" value="src"/> <!-- 被测试程序源文件 -->			
+        <property name="test_src.dir" value="test_src"/> <!-- 测试程序源文件 -->
+        <property name="classes.dir" value="WEB-INF/classes"/> <!-- 编译后class文件路径 -->
+		<property name="instrumented.classes.dir" value="WEB-INF/instrumented_classes"/> <!-- 插入标记位的class文件路径 -->
+		<property name="test_report.dir" value="test_report"/> <!-- 测试报告路径(即Junit和覆盖率报告的上级路径) -->
+        <property name="junit.report.dir" value="test_report/junit"/> <!-- 输出Junit测试报告路径 -->
+		<property name="coverage.report.dir" value="test_report/coverage"/> <!-- 输出测试覆盖率报告路径 -->	
+    </target> 
+ 
+	<!-- 初始化测试环境 -->
+    <target name="prepareDir" depends="setProperties"> 
+        <delete dir="${test_report.dir}"/>  <!-- 删除测试报告文件夹 -->
+    	<delete dir="${instrumented.classes.dir}"/>  <!-- 删除插入指令的class文件 -->
+    	<delete file="cobertura.ser"/> <!-- 删除生成覆盖率报告时生成的ser文件 -->
+        <mkdir dir="${junit.report.dir}"/>  <!-- 创建junit测试报告文件夹 -->
+    	<mkdir dir="${coverage.report.dir}"/>  <!-- 创建覆盖率报告文件夹 -->
+    	<mkdir dir="${instrumented.classes.dir}"/>  <!-- 创建插入指令的class文件 -->
+    </target> 
+	
+	<!--  代码覆盖率统计 准备 -->
+	<path id="cobertura.classpath">
+		<fileset dir="WEB-INF/test_lib/">
+			<include name="cobertura.jar" />
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	<taskdef classpathref="cobertura.classpath" resource="tasks.properties"/><!-- 此处必须有resource属性，否则会报错 -->
+	
+	<!-- 设置需要监控的class文件，在需要监控的class文件中插入标记指令 -->
+	<target name="instrument" depends="prepareDir">
+			<cobertura-instrument todir="${instrumented.classes.dir}"><!-- 插入指令后的class文件存放路径  -->
+				<ignore regex="org.apache.log4j.*" />
+				<fileset dir="${classes.dir}">		
+					<include name="org/loushang/bsp/share/dict/**/*.class" />
+					<include name="org/loushang/bsp/share/organization/provider/OrganProviderImpl.class" />
+					<include name="org/loushang/bsp/share/permit/security/provider/SecurityProviderImp.class" />
+					<include name="org/loushang/bsp/share/permit/security/provider/UserServiceImpl.class" />
+					<include name="org/loushang/bsp/share/workCalendar/provider/WorkdayProviderImpl.class" />
+					<include name="org/loushang/bsp/id/util.MaxValueUtil.class" />
+				</fileset>
+				 <classpath> 
+				        <fileset dir="${lib.dir}" includes="**/*.jar"/><!-- 被测应用程序 jar 所在路径 -->
+				        <fileset dir="${test_lib.dir}" includes="**/*.jar"/> <!-- 测试用 jar 所在路径 -->	 
+				 </classpath> 
+			</cobertura-instrument>
+		</target>
+	
+	<!--执行测试脚本-->
+    <target name="test" depends="instrument"> 
+    	<junit printsummary="yes" fork="yes"  failureProperty="test.failed" dir="${basedir}">
+        	<!--
+        	    注意classpath的顺序: instrumented classes are before the
+        	  original (uninstrumented) classes.  This is important.
+        	-->
+    		<classpath location="${instrumented.classes.dir}" /><!-- 插入指令后的 class 文件所在路径 -->
+    		<classpath location="${classes.dir}" /><!-- 没有插入指令的 class 文件所在路径 -->
+    		<classpath refid="cobertura.classpath" /><!-- Cobertura and its dependencies -->
+       	    <classpath> 
+        	       <fileset dir="${lib.dir}" includes="**/*.jar"/><!-- 被测应用程序 jar 所在路径 -->
+        	       <fileset dir="${test_lib.dir}" includes="**/*.jar"/> <!-- 测试用 jar 所在路径 -->	 
+        	 </classpath>  
+        	<formatter type="xml"/> 
+        
+        	<!--配置需要执行的测试用例-->
+        	 <batchtest todir="${junit.report.dir}"> 
+        	            <fileset dir="${test_src.dir}"> 
+        	                <patternset> 
+        	                	<!--<include name="test/api/bsp/ISecurityProvider/*.java" /> -->	
+        	                	<include name="test/api/bsp/DictFactory/*.java" /> 
+        	                	<!--<include name="test/api/bsp/IGetMneuTypeByRule/*.java" />  -->	
+        	                	<!--<include name="test/api/bsp/IOrganProvider/*.java" />  -->	
+        	                	<!--<include name="test/api/bsp/IOrganService/*.java" />  -->
+        	                	<!-- <include name="test/api/bsp/IUserService/*.java" />  -->	
+        	                	<include name="test/api/bsp/IWorkdayProvider/*.java" /> 
+        	                	<!--<include name="test/api/bsp/LocationFactory/*.java" />  -->	
+        	                	<!--<include name="test/api/bsp/MaxValueUtil/*.java" />  -->	
+        	                	<!--<include name="test/api/bsp/SAMLUtil/*.java" />  -->	
+        	                	<!--<include name="test/api/bsp/SecurityConfig/*.java" />    -->	
+        	                </patternset> 
+        	            </fileset> 
+        	        </batchtest> 
+        </junit> 
+    </target> 
+	
+	<!-- 生成测试报告 -->
+    <target name="junit_report" depends="test"> 
+        <junitreport todir="${junit.report.dir}"> 
+        	<fileset dir="${junit.report.dir}">
+        	<include name="TEST-*.xml"/> <!-- xml格式报告，用户可以自行解析，然后自定义展现方式  -->
+        	 </fileset> 
+            <report  format="frames" todir="${junit.report.dir}/html"/> <!-- format值包括frames（带框架）和noframes（不带框架） -->
+        </junitreport> 
+    </target> 
+	
+	<!-- 生成测试覆盖率报告 -->
+	<target name="generate_coverage-report" depends="junit_report">
+			<cobertura-report destdir="${coverage.report.dir}">
+				<fileset dir="${src.dir}">
+					<include name="**/*.java"/><!-- 此处用于设置覆盖率报告中关联的源文件；**/*.java  表示所有.java文件-->
+				</fileset>
+			</cobertura-report>
+	</target>
+</project>

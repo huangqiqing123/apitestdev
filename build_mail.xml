@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="APITest2" default="email"> 
+    
+	<!--准备环境变量-->
+	<target name="setProperties"> 		
+    	<property name="lib.dir"   value="WEB-INF/lib" /> <!-- 应用程序jar包 -->
+		<property name="test_lib.dir"   value="WEB-INF/test_lib" /> <!-- 测试用jar包 -->
+        <property name="classes.dir" value="WEB-INF/classes"/> <!-- 编译后class文件路径 -->
+		
+		<path id="all_libs">
+		    <fileset dir="${lib.dir}" includes="**/*.jar"/>
+			<fileset dir="${test_lib.dir}" includes="**/*.jar"/>
+		</path>
+    </target> 
+		
+	<!-- 将测试报告打成 zip压缩包-->
+			<target name ="zip" depends="setProperties"> 
+				<java classname="test.tool.zip.ZipTool" classpath="${classes.dir}" classpathref="all_libs"/><!-- 此处不可以写${all_libs} -->
+			</target>
+	
+	<!-- 打开测试报告 -->
+			<target name ="open" depends="zip"> 
+				<java classname="test.tool.myprivate.OpenHtmlReport" classpathref="all_libs">
+					<arg value="测试传参" /> <!-- 向  main 方法中传参数  -->
+					<classpath location="${classes.dir}" />
+				</java>
+			</target>
+	
+	<!-- 发送邮件  --><!-- 此处不可以写${all_libs} -->
+		<target name ="email" depends="open"> 
+				<java classname="test.tool.myprivate.SendEmailReport" classpath="${classes.dir}" classpathref="all_libs"/>
+			</target> 
+</project>

@@ -1,0 +1,50 @@
+
+1、-----------------------------Objenesis------------------------------------->
+如果一个类没有参数为空的构造方法时候，那么你直接调用newInstance方法试图得到一个实例对象的时候是会抛出异常的,
+easymock的 最新版本已经使用了Objenesis来实例化一个Class获取对象，
+所以本程序的运行依赖于objenesis-1.2.jar
+
+2、-------------easymock------class extension---------------------------------
+easymock 3.0 版本是最新版本，2010-05-08 发布，主要改进就是将easymock
+class extension的功能合并到easymock中，以后只要使用easymock就可以提供class mocking的功能。当然
+为了兼容2.*下的旧代码，依然提供了EasyMock 3.0 Class Extension代理到easymock 3.0。
+
+3、-------------class mocking是有一些限制的(接口中的方法是不能被static、private、final修饰的)---------->
+
+1) 不能mock类的 final方法，会抛异常：java.lang.IllegalStateException: no last call on a mock available
+
+2) 不能mock类的static 方法，会抛异常：java.lang.IllegalStateException: no last call on a mock available
+
+3) 不能mock类的一些特殊方法: equals(), toString()和hashCode().
+原因是easymock在实现是为每个class mock对象提供了内建的以上三个方法。需要强调的是，对于基于
+interface的mock，这个限制也是同样存在的，即使以上三个方式是interface定义的一部分。
+在使用时需要避开这种场景，或者组合使用其他的mock 框架比如jmockit来mock private方法和final方法。
+
+3、-----------------createNiceMock--createStrictMock--------------------------------->
+EasyMock.createNiceMock()
+EasyMock.createStrictMock()
+---------------
+EasyMock.createNiceControl()
+EasyMock.createStrictControl()
+--------------
+3.1、strict mock方式下默认是开启调用顺序检测的，而普通的mock方式则默认不开启调用顺序检测。
+3.2、createNiceMock()和createMock()相同的是默认不开启调用顺序检测，另外有一个非常有用的功能就是对于意料之外的调用将返回0,null 或者false.之所以说有用，
+是因为在我们的实际开发过程中，有时候会有这样的需求：对于某个mock对象的调用(可以是部分，也可以是全部)，我们完全不介意调用细节，包括是否调用和调用顺序，
+参数，返回值，我们只要求mock对象容许程序可以继续而不是抛出异常报告说 unexpected invocations 。nice mock在这种情况下可以为我们节省大量的工作量，非常方便。
+
+4、---------------指定具体调用次数或者放宽调用次数检验的说明-------------------->
+1. once()
+如果明确调用次数为1，则可以使用这个方法显式指定，也可以省略，easymock默认为1。
+2. atLeastOnce()
+指定调用为1次或者多次，即 count >= 1.
+3. anyTimes()
+容许调用次数为任意次，即 count >= 0.
+4. times(int count)
+直接指定调用次数
+5. times(int min, int max)
+这个方法比较灵活，可以指定最小次数和最大次数。
+其他的方法都可以视为这个方法的变体，比如
+once()等价于times(1,1)
+atLeastOnce()等价于times(1,Integer.MAX_VALUE)
+anyTimes()等价于times(0,Integer.MAX_VALUE)
+times(int count)等价于times(count,count)

@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+	<display-name>loushang5</display-name>
+
+	<context-param>
+		<param-name>assemblytype</param-name>
+		<param-value>xml</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>Cache-Control</filter-name>
+		<filter-class>org.loushang.next.web.CacheControl</filter-class>	
+		<init-param>
+			<param-name>active</param-name>
+			<param-value>false</param-value>
+		</init-param>		
+	</filter>
+
+	<!-- session����-->
+	<filter>
+		<filter-name>SecurityContextIntegrationFilter</filter-name>
+		<filter-class>
+			org.loushang.bsp.security.context.HttpSessionContextIntegrationFilter
+		</filter-class>
+	</filter>
+	<!-- ��֤������ -->
+	<filter>
+		<filter-name>AuthenticationFilter</filter-name>
+		<filter-class>
+			org.loushang.bsp.security.authen.web.AuthenticationProcessingFilter
+		</filter-class>
+	</filter>
+	<!-- ���������SAML����
+	<filter>
+		<filter-name>IdPSessionFilter</filter-name>
+		<filter-class>
+			org.loushang.bsp.security.idp.web.filters.IdPSessionFilter
+		</filter-class>
+	</filter>
+	-->
+	<!-- ���ʿ����� -->
+	<filter>
+		<filter-name>AuthorizationFilter</filter-name>
+		<filter-class>
+			org.loushang.bsp.security.author.intercept.web.FilterSecurityInterceptor
+		</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>Cache-Control</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>SecurityContextIntegrationFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>AuthenticationFilter</filter-name>
+		<url-pattern>/j_bsp_security_check/*</url-pattern>
+	</filter-mapping>
+    <!-- ����saml����Ĺ�����
+	<filter-mapping>
+		<filter-name>IdPSessionFilter</filter-name>
+		<url-pattern>/SAML2/*</url-pattern>
+	</filter-mapping>
+    -->
+	<filter-mapping>
+		<filter-name>AuthorizationFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
+	<filter-mapping>
+		<filter-name>AuthorizationFilter</filter-name>
+		<url-pattern>/command/ajax/*</url-pattern>
+	</filter-mapping>
+
+	<listener>
+		<listener-class>
+			org.loushang.sca.ContextLoaderListener
+		</listener-class>
+	</listener>
+	<listener>
+		<listener-class>
+			org.loushang.bsp.security.web.listener.SessonListener
+		</listener-class>
+	</listener>
+
+	
+	  <!--workflow listener start-->
+	  <listener>
+        <listener-class>flex.messaging.HttpFlexSession</listener-class>
+      </listener>
+      <!--workflow listener end-->
+
+	  <!-- live listener start-->
+	  <listener>
+		<listener-class>
+		 org.loushang.live.engine.servlet.JMSInitListener
+		</listener-class>
+	  </listener>
+	  <listener>
+		<listener-class>
+		 org.loushang.live.engine.servlet.DBTimerInitListener
+		</listener-class>
+	  </listener>
+		<!-- live listener end-->
+
+	  <!--workflow servlet start-->
+     <servlet>
+        <servlet-name>MessageBrokerServlet</servlet-name>
+        <display-name>MessageBrokerServlet</display-name>
+        <servlet-class>flex.messaging.MessageBrokerServlet</servlet-class>
+        <init-param>
+            <param-name>services.configuration.file</param-name>
+            <param-value>/WEB-INF/flex/services-config.xml</param-value>
+       </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+	<servlet>
+      <servlet-name>WorkflowServiceServlet</servlet-name>
+      <display-name>WorkflowService Servlet</display-name>
+      <servlet-class>org.loushang.workflow.webservice.servlet.WorkflowServiceServlet</servlet-class>
+    </servlet>
+	<!--workflow servlet end-->
+
+	<servlet>
+		<servlet-name>logout</servlet-name>
+		<servlet-class>
+			org.loushang.bsp.security.web.servlet.LogOut
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>scaenginer</servlet-name>
+		<servlet-class>
+			org.loushang.sca.impl.ws.axis.ScaWebServiceServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>feed</servlet-name>
+		<servlet-class>
+			org.loushang.next.common.feed.FeedReOutServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>scajsonrpc</servlet-name>
+		<servlet-class>
+			org.loushang.sca.impl.rpc.JSONRPCServiceServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>command_ajax</servlet-name>
+		<servlet-class>
+			org.loushang.next.web.cmd.CommandServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>command_dispatcher</servlet-name>
+		<servlet-class>
+			org.loushang.next.web.cmd.DispatcherServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>chart</servlet-name>
+		<servlet-class>
+			org.loushang.next.chart.data.ChartServlet
+		</servlet-class>
+	</servlet>
+
+
+	<servlet>
+		<servlet-name>download</servlet-name>
+		<servlet-class>
+			org.loushang.next.common.download.DownLoadServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>jsondraw</servlet-name>
+		<servlet-class>
+			org.loushang.demo.draw.JsonManager
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>AuthenticationServlet</servlet-name>
+		<servlet-class>
+			org.loushang.bsp.security.web.servlet.AuthenticationServlet
+		</servlet-class>
+	</servlet>
+	
+   <servlet>
+		<servlet-name>RegistorListener</servlet-name>
+		<servlet-class>
+			org.loushang.bsp.security.web.listener.RegistorListener
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet>
+		<servlet-name>MessageSender</servlet-name>
+		<display-name>MessageSender</display-name>
+		<servlet-class>
+		org.loushang.live.engine.servlet.MessageSenderServlet</servlet-class>
+	</servlet>
+
+	
+	<!-- saml�����servlet
+  	<servlet>
+	    <servlet-name>profilesRequestDispatcherServlet</servlet-name>
+		<servlet-class>
+			org.loushang.bsp.security.idp.web.servlets.ProfilesRequestDispatcherServlet
+		</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>profilesRequestDispatcherServlet</servlet-name>
+		<url-pattern>/SAML2/*</url-pattern>
+		</servlet-mapping>
+	-->
+	
+
+<!--axis2-->
+
+	<servlet>
+		<servlet-name>WsServlet</servlet-name>
+		<servlet-class>
+			org.loushang.ws.transport.http.AxisServlet
+		</servlet-class>		
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+    <servlet>
+        <servlet-name>WsAdminServlet</servlet-name>
+        <display-name>Apache-Axis AxisAdmin Servlet (Web Admin)</display-name>
+        <servlet-class>
+            org.loushang.ws.webapp.AxisAdminServlet</servlet-class>
+    </servlet>
+
+<!--file upload begin-->
+	 <servlet>
+        <servlet-name>UploadServlet</servlet-name>        
+        <servlet-class>
+            org.loushang.cms.upload.UploadFileServlet</servlet-class>
+    </servlet>
+<!--file upload end-->
+	
+    <!--workflow servlet mapping start-->
+    <servlet-mapping>
+        <servlet-name>MessageBrokerServlet</servlet-name>
+        <url-pattern>/messagebroker/*</url-pattern>
+    </servlet-mapping>
+	<servlet-mapping>
+      <servlet-name>WorkflowServiceServlet</servlet-name>
+      <url-pattern>/WorkflowServices/*</url-pattern>
+    </servlet-mapping>
+   <!--workflow servlet mapping end-->
+
+	<servlet-mapping>
+		<servlet-name>WsServlet</servlet-name>
+		<url-pattern>/servlet/AxisServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>WsServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>WsServlet</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>WsAdminServlet</servlet-name>
+        <url-pattern>/ws-admin/*</url-pattern>
+    </servlet-mapping>
+
+<!--axis2-->
+ 	<servlet-mapping>
+		<servlet-name>AuthenticationServlet</servlet-name>
+		<url-pattern>/j_bsp_security_check/*</url-pattern>
+  	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>feed</servlet-name>
+		<url-pattern>/feed/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>chart</servlet-name>
+		<url-pattern>/chart/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>scajsonrpc</servlet-name>
+		<url-pattern>/SCAJSON-RPC/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>command_ajax</servlet-name>
+		<url-pattern>/command/ajax/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>command_dispatcher</servlet-name>
+		<url-pattern>/command/dispatcher/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>download</servlet-name>
+		<url-pattern>/download</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>jsondraw</servlet-name>
+		<url-pattern>/jsondraw</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>logout</servlet-name>
+		<url-pattern>/logout</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>scaenginer</servlet-name>
+		<url-pattern>/sca/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+        <servlet-name>UploadServlet</servlet-name>
+        <url-pattern>/UploadServlet</url-pattern>
+    </servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>MessageSender</servlet-name>
+		<url-pattern>/MessageSender</url-pattern>
+	</servlet-mapping>
+
+	<session-config>
+		<session-timeout>2</session-timeout>
+	</session-config>
+
+	<mime-mapping>
+		<extension>xml</extension>
+		<mime-type>text/xml</mime-type>
+	</mime-mapping>
+
+	<welcome-file-list>
+		<welcome-file>jsp/public/mashup/portal.jsp</welcome-file>
+		<welcome-file>jsp/public/login.jsp</welcome-file>
+	</welcome-file-list>
+
+	<taglib>
+		<taglib-uri>/tags/next-web</taglib-uri>
+		<taglib-location>/WEB-INF/tld/next-web.tld</taglib-location>
+	</taglib>
+
+	<taglib>
+		<taglib-uri>/tags/next-model</taglib-uri>
+		<taglib-location>/WEB-INF/tld/next-model.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/ecgapform_html</taglib-uri>
+		<taglib-location>/WEB-INF/tld/ecgapform_html.tld</taglib-location>
+	</taglib>
+	<taglib>
+        <taglib-uri>/tags/loushang-bsp</taglib-uri>
+        <taglib-location>/WEB-INF/tld/bsp-web.tld</taglib-location>
+    </taglib>
+	<taglib>
+		<taglib-uri>/tags/next-billprint</taglib-uri>
+		<taglib-location>/WEB-INF/tld/next-billprint.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/cms-upload</taglib-uri>
+		<taglib-location>/WEB-INF/tld/cms/cms-upload.tld</taglib-location>
+	</taglib>
+	<taglib>
+		<taglib-uri>/tags/next-excel</taglib-uri>
+		<taglib-location>/WEB-INF/tld/next-excel.tld</taglib-location>
+	</taglib>
+
+</web-app>
+
+
